@@ -2,31 +2,34 @@ import os,math
 from PIL import Image
 #Minecraft 1.12.2 Only.
 
-woolcolor = [
-    (241, 241, 246),
-    (234, 115, 22),
-    (181, 64, 174),
-    (53, 168, 211),
-    (243, 203, 51),
-    (104, 174, 24),
-    (229, 125, 160),
-    (61, 66, 71),
-    (137, 138, 134),
-    (20, 137, 145),
-    (120, 40, 170),
-    (56, 60, 161),
-    (107, 67, 38),
-    (87, 113, 22),
-    (152, 36, 32),
-    (12, 14, 19)
-    ]
+colors = {
+    (206, 211, 212):'concrete 0',
+    (221, 95, 0):'concrete 1',
+    (168, 49, 158):'concrete 2',
+    (35, 135, 197):'concrete 3',
+    (239, 174, 22):'concrete 4',
+    (93, 167, 24):'concrete 5',
+    (211, 101, 142):'concrete 6',
+    (54, 57, 61):'concrete 7',
+    (125, 125, 115):'concrete 8',
+    (21, 118, 134):'concrete 9',
+    (99, 31, 154):'concrete 10',
+    (45, 47, 142):'concrete 11',
+    (96, 59, 33):'concrete 12',
+    (72, 90, 36):'concrete 13',
+    (141, 33, 33):'concrete 14',
+    (8, 10, 15):'concrete 15'
+    }
 def convertRGB(r,g,b):
     tmp = []
-    for example in woolcolor:
+    rgbs = list(colors.keys())
+    for example in rgbs:
         tmp.append(colorDistance((r,g,b),example))
     tmp_ = min(tmp)
     index = tmp.index(tmp_)
-    return index,woolcolor[index]
+    rgb = rgbs[index]
+    block = colors[rgb]
+    return block,rgb
 
 def colorDistance(rgb_1,rgb_2):
      R_1,G_1,B_1 = rgb_1
@@ -94,14 +97,14 @@ def main(inputfile,outfilename,path='./McfunctionPictures/',maxwh=600,absmode=Tr
                 f = open(path+outfilename+'_%s.mcfunction'%counter_,'w+',encoding='utf-8')
                 counter_ += 1
             rgb = img_array[x,y]
-            wool = convertRGB(rgb[0],rgb[1],rgb[2])[0]
+            block = convertRGB(rgb[0],rgb[1],rgb[2])[0]
             if absmode:
-                f.write(f'fill {coor[0]+x} {coor[1]} {coor[2]+y} {coor[0]+x} {coor[1]} {coor[2]+y} wool {wool}\n')
+                f.write(f'fill {coor[0]+x} {coor[1]} {coor[2]+y} {coor[0]+x} {coor[1]} {coor[2]+y} {block}\n')
             else:
-                f.write(f'execute {player} ~{coor[0]+x} ~{coor[1]} ~{coor[2]+y} fill ~ ~ ~ ~ ~ ~ wool {wool}\n')
+                f.write(f'execute {player} ~{coor[0]+x} ~{coor[1]} ~{coor[2]+y} fill ~ ~ ~ ~ ~ ~ {block}\n')
             counter += 1
             print(f'\rLoop{counter}',end='')
     print('\nDone.')
 
 if __name__ == '__main__':
-    main(input('File:'),input('OutFilename:'))
+    main(input('File:'),input('OutFilename:'),maxwh=int(input('Max Height&Width:')))
