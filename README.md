@@ -1,18 +1,18 @@
 # McFuncTools
 
-## 针对 Minecraft Java <em>1.12.2</em> 的用Python编写的函数工具
+## 针对 <em>Minecraft Java 1.12.2</em> 的用Python编写的函数工具
 
 ### 现有以下功能
 
-生成球体
+生成空心球体
 
 生成空心圆形
 
 生成直线
 
-生成空间平面（不完善
+生成空间平面（制作中
 
-生成16色+Alpha通道像素画
+生成16色+Alpha通道像素画（不完善
 
 从obj文件生成3D模型
 
