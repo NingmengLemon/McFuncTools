@@ -1,6 +1,6 @@
 # McFuncTools
 
-## 针对 Minecraft Java <u>1.12.2</u> 的用Python编写的函数工具
+## 针对 Minecraft Java <em>1.12.2</em> 的用Python编写的函数工具
 
 ### 现有以下功能
 
