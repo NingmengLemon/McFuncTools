@@ -79,32 +79,53 @@ def resize(img,maxwh=200):
         img = img.resize((w,h),Image.ANTIALIAS)
     return img
 
-def main(inputfile,outfilename,path='./McfunctionPictures/',maxwh=600,absmode=True,coor=(0,5,0),player='@p'):
-    img = resize(Image.open(inputfile).convert('RGB'),maxwh)
+def main(inputfile,maxwh=600,absmode=True,coor=(0,5,0),player='@p'):
+    img = resize(Image.open(inputfile).convert('RGBA'),maxwh)
     img_array = img.load()
     img_size = img.size
     counter = 0
     counter_ = 1
-    if not os.path.exists(path):
-        os.mkdir(path)
-    f = open(path+outfilename+'.mcfunction','w+',encoding='utf-8')
+    commands = []
     for x in range(0,img_size[0]):
         for y in range(0,img_size[1]):
-            if counter > 65535:
-                counter = 0
-                print('\nLoopFinished.')
-                f.close()
-                f = open(path+outfilename+'_%s.mcfunction'%counter_,'w+',encoding='utf-8')
-                counter_ += 1
-            rgb = img_array[x,y]
-            block = convertRGB(rgb[0],rgb[1],rgb[2])[0]
-            if absmode:
-                f.write(f'fill {coor[0]+x} {coor[1]} {coor[2]+y} {coor[0]+x} {coor[1]} {coor[2]+y} {block}\n')
+            rgba = img_array[x,y]
+            if rgba[3] < 5:
+                if absmode:
+                    commands.append(f'fill {coor[0]+x} {coor[1]} {coor[2]+y} {coor[0]+x} {coor[1]} {coor[2]+y} air')
+                else:
+                    commands.append(f'execute {player} ~{coor[0]+x} ~{coor[1]} ~{coor[2]+y} fill ~ ~ ~ ~ ~ ~ air')
             else:
-                f.write(f'execute {player} ~{coor[0]+x} ~{coor[1]} ~{coor[2]+y} fill ~ ~ ~ ~ ~ ~ {block}\n')
+                block = convertRGB(rgba[0],rgba[1],rgba[2])[0]
+                if absmode:
+                    commands.append(f'fill {coor[0]+x} {coor[1]} {coor[2]+y} {coor[0]+x} {coor[1]} {coor[2]+y} {block}')
+                else:
+                    commands.append(f'execute {player} ~{coor[0]+x} ~{coor[1]} ~{coor[2]+y} fill ~ ~ ~ ~ ~ ~ {block}')
             counter += 1
             print(f'\rLoop{counter}',end='')
     print('\nDone.')
+    return commands
+
+def save(filename,commands,path='./McfunctionPictures/'):#不需要文件名后缀
+    if not os.path.exists(path):
+        os.mkdir(path)
+    if not path.endswith('\\') and not path.endswith('/'):
+        path = path+'/'
+    print('Saving...')
+    f = open(path+'%s.mcfunction'%filename,'w+',encoding='utf-8')
+    counter = 0
+    counter_ = 1
+    for command in commands:
+        if counter > 65535:
+            f.close()
+            f = open(path+'%s_%s.mcfunction'%(filename,counter_),'w+',encoding='utf-8')
+            counter += 1
+            counter = 0
+            print('\nLoop Finished.')
+        f.write(command+'\n')
+        counter += 1
+        print('\rLoop%s'%counter,end='')
+    f.close()
+    print('\nSave Completed.')
 
 if __name__ == '__main__':
-    main(input('File:'),input('OutFilename:'),maxwh=int(input('Max Height&Width:')))
+    save(input('OutFilename:'),main(input('File:'),maxwh=int(input('Max Height&Width:'))))

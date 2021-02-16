@@ -8,7 +8,12 @@ def straightline(x1,y1,z1,x2,y2,z2,absmode=True,block='stone',player='@p'):
     e = (math.floor(x2),math.floor(y2),math.floor(z2))
     d = math.sqrt((x1-x2)**2+(y1-y2)**2+(z1-z2)**2)
     commands = []
-    if (s[0]==e[0] and s[1]==e[1]) or (s[0]==e[0] and s[2]==e[2]) or (s[1]==e[1] and s[2]==e[2]):
+    if s[0]==e[0] and s[1]==e[1] and s[2]==e[2]:
+        if absmode:
+            commands.append(f'setblock {s[0]} {s[1]} {s[2]} {block}')
+        else:
+            commands.append(f'execute {player} ~ ~ ~ setblock ~{s[0]} ~{s[1]} ~{s[2]} {block}')
+    elif (s[0]==e[0] and s[1]==e[1]) or (s[0]==e[0] and s[2]==e[2]) or (s[1]==e[1] and s[2]==e[2]):
         if absmode:
             commands.append(f'fill {s[0]} {s[1]} {s[2]} {e[0]} {e[1]} {e[2]} {block}')
         else:
