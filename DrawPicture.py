@@ -101,7 +101,8 @@ def main(inputfile,maxwh=600,absmode=True,coor=(0,5,0),player='@p'):
                 else:
                     commands.append(f'execute {player} ~{coor[0]+x} ~{coor[1]} ~{coor[2]+y} fill ~ ~ ~ ~ ~ ~ {block}')
             counter += 1
-            print(f'\rLoop{counter}',end='')
+            if counter%100 == 0:
+                print(f'\rLoop{counter}',end='')
     print('\nDone.')
     return commands
 
@@ -118,12 +119,13 @@ def save(filename,commands,path='./McfunctionPictures/'):#不需要文件名后�
         if counter > 65535:
             f.close()
             f = open(path+'%s_%s.mcfunction'%(filename,counter_),'w+',encoding='utf-8')
-            counter += 1
+            counter_ += 1
             counter = 0
             print('\nLoop Finished.')
         f.write(command+'\n')
         counter += 1
-        print('\rLoop%s'%counter,end='')
+        if counter%100 == 0:
+            print('\rLoop%s'%counter,end='')
     f.close()
     print('\nSave Completed.')
 

@@ -35,28 +35,28 @@ def readData(path):
                 
     return points,faces
 
+def ymaxmin(points):
+    ys = []
+    for tmp in points:
+        ys.append(tmp[1])
+    ymax = max(ys)
+    ymin = min(ys)
+    return ymax,ymin
+
 def mesh(points,faces=None,a=0,c=0,height=world_max_height,block='stone'):
     commands = []
-    xs = ys = zs = []
-    for tmp in points:
-        xs.append(tmp[0])
-        ys.append(tmp[1])
-        zs.append(tmp[2])
-    xmax = max(xs)
-    ymax = max(ys)
-    zmax = max(zs)
-    xmin = min(xs)
-    ymin = min(ys)
-    zmin = min(zs)
+    ymax,ymin = ymaxmin(points)
     print('Ymax:',ymax)
     print('Ymin:',ymin)
     t = (ymax-ymin)/height #计算比例
     print('Proportion:',t)
     for i in range(len(points)):
-        points[i][1] -= ymin #y坐标归正
         points[i][1] /= t #等比缩放
         points[i][0] /= t
         points[i][2] /= t
+    ymin = ymaxmin(points)[1]
+    for i in range(len(points)):
+        points[i][1] -= ymin #y坐标归正
     for tmp in points:
         commands.append(f'setblock {int(tmp[0])+a} {int(tmp[1])} {int(tmp[2])+c} {block}')
     print('Points Done.')

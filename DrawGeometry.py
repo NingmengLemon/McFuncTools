@@ -254,7 +254,7 @@ def save(filename,commands,path='./GeometryMcfunctions/'):#不需要文件名后
         if counter > 65535:
             f.close()
             f = open(path+'%s_%s.mcfunction'%(filename,counter_),'w+',encoding='utf-8')
-            counter += 1
+            counter_ += 1
             counter = 0
             print_('\nLoop Finished.')
         f.write(command+'\n')
