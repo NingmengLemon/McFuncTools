@@ -20,7 +20,7 @@ colors = {
     (141, 33, 33):'concrete 14',
     (8, 10, 15):'concrete 15'
     }
-def convertRGB(r,g,b):
+def _convertRGB(r,g,b):
     tmp = []
     rgbs = list(colors.keys())
     for example in rgbs:
@@ -31,7 +31,7 @@ def convertRGB(r,g,b):
     block = colors[rgb]
     return block,rgb
 
-def colorDistance(rgb_1,rgb_2):
+def _colorDistance(rgb_1,rgb_2):
      R_1,G_1,B_1 = rgb_1
      R_2,G_2,B_2 = rgb_2
      rmean = (R_1 +R_2 ) / 2
@@ -40,7 +40,7 @@ def colorDistance(rgb_1,rgb_2):
      B = B_1 - B_2
      return math.sqrt((2+rmean/256)*(R**2)+4*(G**2)+(2+(255-rmean)/256)*(B**2))
 
-def RGBtoHSV(r,g,b):
+def _RGBtoHSV(r,g,b):
     r /= 255
     g /= 255
     b /= 255
@@ -65,7 +65,7 @@ def RGBtoHSV(r,g,b):
     v = cmax
     return h,s,v
 
-def resize(img,maxwh=200):
+def _resize(img,maxwh=200):
     size = img.size
     if size[0] > maxwh:
         t = maxwh/size[0]
@@ -80,7 +80,7 @@ def resize(img,maxwh=200):
     return img
 
 def main(inputfile,maxwh=600,absmode=True,coor=(0,5,0),player='@p'):
-    img = resize(Image.open(inputfile).convert('RGBA'),maxwh)
+    img = _resize(Image.open(inputfile).convert('RGBA'),maxwh)
     img_array = img.load()
     img_size = img.size
     counter = 0
@@ -95,7 +95,7 @@ def main(inputfile,maxwh=600,absmode=True,coor=(0,5,0),player='@p'):
                 else:
                     commands.append(f'execute {player} ~{coor[0]+x} ~{coor[1]} ~{coor[2]+y} fill ~ ~ ~ ~ ~ ~ air')
             else:
-                block = convertRGB(rgba[0],rgba[1],rgba[2])[0]
+                block = _convertRGB(rgba[0],rgba[1],rgba[2])[0]
                 if absmode:
                     commands.append(f'fill {coor[0]+x} {coor[1]} {coor[2]+y} {coor[0]+x} {coor[1]} {coor[2]+y} {block}')
                 else:
@@ -105,29 +105,3 @@ def main(inputfile,maxwh=600,absmode=True,coor=(0,5,0),player='@p'):
                 print(f'\rLoop{counter}',end='')
     print('\nDone.')
     return commands
-
-def _save(filename,commands,path='./McfunctionPictures/'):#不需要文件名后缀
-    if not os.path.exists(path):
-        os.mkdir(path)
-    if not path.endswith('\\') and not path.endswith('/'):
-        path = path+'/'
-    print('Saving...')
-    f = open(path+'%s.mcfunction'%filename,'w+',encoding='utf-8')
-    counter = 0
-    counter_ = 1
-    for command in commands:
-        if counter > 65535:
-            f.close()
-            f = open(path+'%s_%s.mcfunction'%(filename,counter_),'w+',encoding='utf-8')
-            counter_ += 1
-            counter = 0
-            print('\nLoop Finished.')
-        f.write(command+'\n')
-        counter += 1
-        if counter%100 == 0:
-            print('\rLoop%s'%counter,end='')
-    f.close()
-    print('\nSave Completed.')
-
-if __name__ == '__main__':
-    _save(input('OutFilename:'),main(input('File:'),maxwh=int(input('Max Height&Width:'))))
